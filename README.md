@@ -1,2 +1,2 @@
 # RichSkyDelivery-web
-存放SkyDelivery项目的git仓库
+开发SkyDelivery项目的git仓库
