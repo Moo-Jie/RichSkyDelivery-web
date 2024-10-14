@@ -1,16 +1,20 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +82,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateUser(BaseContext.getCurrentId());
         //调用持久层方法
         employeeMapper.insert(employee);
+    }
+
+    @Override
+    public PageResult getEmployeePage(EmployeePageQueryDTO employeePageQueryDTO) {
+        //设置分页参数
+        //startPage底层把分页参数放入ThreadLocal中，mybatis在查询时会从ThreadLocal中获取分页参数，然后进行分页查询
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        //执行查询(Page<>本身就继承于ArrayList<>容器，因此mybaties可以顺利返回结果)
+        Page<Employee> page=employeeMapper.getEmployeeByName(employeePageQueryDTO.getName());
+        //封装分页查询结果
+        return new PageResult(page.getTotal(), page.getResult());
     }
 
 }
