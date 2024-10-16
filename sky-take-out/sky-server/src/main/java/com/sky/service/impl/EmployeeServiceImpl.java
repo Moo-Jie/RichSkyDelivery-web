@@ -10,12 +10,12 @@ import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
-import com.sky.exception.AccountLockedException;
-import com.sky.exception.AccountNotFoundException;
-import com.sky.exception.PasswordErrorException;
+import com.sky.exception.*;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
+import com.sky.utils.IdentityCardUtil;
+import com.sky.utils.PhoneUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         String username = employeeLoginDTO.getUsername();
         String password = employeeLoginDTO.getPassword();
 
-        //1、根据用户名查询数据库中的数据
+        //1、根据用户名查询密码
         Employee employee = employeeMapper.getByUsername(username);
 
         //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）会被全局异常捕获到，程序报错停止运行
@@ -68,6 +68,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void saveEmployee(EmployeeDTO employeeDTO) {
+        //判断身份证号和手机号是否符合标准长度
+        if (!IdentityCardUtil.validate(employeeDTO.getIdNumber())) {
+            throw new PersonIDException(MessageConstant.ORDER_PersonID_ERROR);
+        }
+
+        if (!PhoneUtil.isMobileNumber(employeeDTO.getPhone())) {
+            throw new PhoneException(MessageConstant.ORDER_Phone_ERROR);
+        }
+
         //由于持久层的方法参数为Employee，而前端传来的是EmployeeDTO，所以需要进行转换
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
@@ -95,4 +104,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         return new PageResult(page.getTotal(), page.getResult());
     }
 
+    @Override
+    public void startOrStopStatus(Integer status, Long id) {
+        Employee emp = Employee.builder()
+                .id(id)
+                .status(status)
+                .build();
+        //调用持久层方法
+        employeeMapper.startOrStopStatus(emp);
+    }
 }
