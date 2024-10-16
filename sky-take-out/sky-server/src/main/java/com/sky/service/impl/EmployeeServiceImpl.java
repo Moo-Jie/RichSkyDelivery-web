@@ -83,12 +83,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         //设置其他属性
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));//设置为初始密码，再进行MD5加密处理
         employee.setStatus(StatusConstant.ENABLE);//设置为启用状态
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+        //employee.setCreateTime(LocalDateTime.now());AOP内实现
+        //employee.setUpdateTime(LocalDateTime.now());AOP内实现
         //设置操作用户ID
         // 获取当前登录用户的ID
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+        //employee.setCreateUser(BaseContext.getCurrentId());AOP内实现
+        //employee.setUpdateUser(BaseContext.getCurrentId());AOP内实现
         //调用持久层方法
         employeeMapper.insert(employee);
     }
@@ -105,12 +105,39 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public Employee getEmployeeById(Long id) {
+        return employeeMapper.getEmployeeById(id);
+    }
+
+    @Override
+    public void updateEmployee(EmployeeDTO employeeDTO) {
+        //判断身份证号和手机号是否符合标准长度
+        if (!IdentityCardUtil.validate(employeeDTO.getIdNumber())) {
+            throw new PersonIDException(MessageConstant.ORDER_PersonID_ERROR);
+        }
+
+        if (!PhoneUtil.isMobileNumber(employeeDTO.getPhone())) {
+            throw new PhoneException(MessageConstant.ORDER_Phone_ERROR);
+        }
+        //由于持久层的方法参数为Employee，而前端传来的是EmployeeDTO，所以需要进行转换
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        //设置其他属性
+        //employee.setUpdateTime(LocalDateTime.now());AOP内实现
+        //设置操作用户ID
+        //employee.setUpdateUser(BaseContext.getCurrentId());AOP内实现
+        System.out.println(employee);
+        //调用持久层方法
+        employeeMapper.update(employee);
+    }
+
+    @Override
     public void startOrStopStatus(Integer status, Long id) {
         Employee emp = Employee.builder()
                 .id(id)
                 .status(status)
                 .build();
         //调用持久层方法
-        employeeMapper.startOrStopStatus(emp);
+        employeeMapper.update(emp);
     }
 }

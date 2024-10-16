@@ -35,5 +35,5 @@ sky:
     admin-secret-key: itcast
     # 设置jwt过期时间
     admin-ttl: 7200000
-    # 设置前端传递过来的令牌名称
+    # 设置前端传递过来的令牌属性名
     admin-token-name: token
