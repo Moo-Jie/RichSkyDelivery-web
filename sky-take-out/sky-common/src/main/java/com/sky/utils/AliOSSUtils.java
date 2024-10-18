@@ -1,14 +1,17 @@
-package com.aliyun.oss;
+package com.sky.utils;
 
+import com.aliyun.oss.ClientException;
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.OSSException;
 import com.aliyun.oss.common.auth.CredentialsProviderFactory;
 import com.aliyun.oss.common.auth.EnvironmentVariableCredentialsProvider;
-import com.sky.entity.AliOSSProperties;
+import com.sky.properties.AliOSSProperties;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
 public class AliOSSUtils {
-
     AliOSSProperties aliOSSProperties;
 
     public AliOSSUtils(AliOSSProperties aliOSSProperties) {
@@ -37,6 +40,7 @@ public class AliOSSUtils {
         String objectName = UUID.randomUUID() + lastName;
 
         // 从环境变量中获取访问凭证。运行本代码示例之前，请确保已设置环境变量OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。
+        //新版工具包从环境变量中获取访问凭证，因此无需配置后两项
         EnvironmentVariableCredentialsProvider credentialsProvider = CredentialsProviderFactory.newEnvironmentVariableCredentialsProvider();
 
         // 创建OSSClient实例。
@@ -65,7 +69,7 @@ public class AliOSSUtils {
             }
         }
 
-        //文件访问路径
+        //截取文件访问路径
         String url = endpoint.split("//")[0] + "//" + bucketName + "." + endpoint.split("//")[1] + "/" + objectName;
         // 关闭ossClient
         ossClient.shutdown();

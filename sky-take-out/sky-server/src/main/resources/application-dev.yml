@@ -1,3 +1,4 @@
+#开发环境下的配置文件，覆盖application.yml中的配置
 sky:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -6,3 +7,10 @@ sky:
     database: sky_take_out
     username: root
     password: 12345
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    bucketName: rich-tams
+    #    //新版工具包从环境变量中获取访问凭证，因此无需配置这两项
+    #    access-key-id:
+    #    access-key-secret:

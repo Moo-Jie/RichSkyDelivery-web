@@ -3,7 +3,8 @@ server:
 
 spring:
   profiles:
-    active: dev
+    #当正式上线时，切换为prod
+    active: dev  #application-dev.yml生效
   main:
     allow-circular-references: true
   datasource:
@@ -37,3 +38,12 @@ sky:
     admin-ttl: 7200000
     # 设置前端传递过来的令牌属性名
     admin-token-name: token
+
+
+aliyun:
+  oss:
+    endpoint: ${aliyun.oss.endpoint}
+    bucketName: ${aliyun.oss.bucketName}
+    #    //新版工具包从环境变量中获取访问凭证，因此无需配置这两项
+    #    access-key-id:
+    #    access-key-secret:
