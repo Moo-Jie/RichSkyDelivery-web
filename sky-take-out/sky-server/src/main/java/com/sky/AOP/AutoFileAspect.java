@@ -6,7 +6,6 @@ import com.sky.context.BaseContext;
 import com.sky.enumeration.OperationType;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -43,27 +42,27 @@ public class AutoFileAspect {
         //判断注解属性值进行不同的业务
         if(value == OperationType.INSERT)
         {
-            Object object01 = arg.getClass()
+            arg.getClass()
                     //通过指定的方法名称和参数类型获取方法对象
                     .getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class)
                     //通过指定运行方法的对象和传入的参数值来调用方法
                     .invoke(arg, LocalDateTime.now());
-            Object object02 = arg.getClass()
+            arg.getClass()
                     .getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class)
                     .invoke(arg, LocalDateTime.now());
-            Object object03 = arg.getClass()
+            arg.getClass()
                     .getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, Long.class)
                     .invoke(arg, BaseContext.getCurrentId());
-            Object object04 = arg.getClass()
+            arg.getClass()
                     .getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class)
                     .invoke(arg, BaseContext.getCurrentId());
         }
         else if(value == OperationType.UPDATE)
         {
-            Object object01 = arg.getClass()
+            arg.getClass()
                  .getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class)
                  .invoke(arg, LocalDateTime.now());
-            Object object02 = arg.getClass()
+            arg.getClass()
                  .getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class)
                  .invoke(arg, BaseContext.getCurrentId());
         }

@@ -1,5 +1,6 @@
 package com.sky.handler;
 
+import com.aliyun.oss.OSSException;
 import com.sky.exception.BaseException;
 import com.sky.result.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -44,5 +45,19 @@ public class GlobalExceptionHandler {
             return Result.error(msg);
         }
         return Result.error("未知错误");
+    }
+
+    @ExceptionHandler
+    public Result exceptionHandler(OSSException ex){
+        log.error("阿里云文件上传失败：{}", ex.getMessage());
+        //异常处理
+        System.out.println("Caught an OSSException, which means your request made it to OSS, "
+                + "but was rejected with an error response for some reason.");
+        System.out.println("Error Message:" + ex.getErrorMessage());
+        System.out.println("Error Code:" + ex.getErrorCode());
+        System.out.println("Request ID:" + ex.getRequestId());
+        System.out.println("Host ID:" + ex.getHostId());
+
+        return Result.error("阿里云文件上传失败");
     }
 }
