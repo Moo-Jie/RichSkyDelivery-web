@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/admin/common")
 @Slf4j
-@Api("常用接口")
+@Api("管理端-常用接口")
 public class CommontController {
     @Autowired
     private AliOSSUtils ossUtils;

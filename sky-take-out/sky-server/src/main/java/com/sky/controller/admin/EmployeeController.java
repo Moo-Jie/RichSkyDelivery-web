@@ -26,7 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/employee")
 @Slf4j
-@Api(tags = "员工相关的接口")
+@Api(tags = "管理端-员工相关的接口")
 public class EmployeeController {
 
     @Autowired
@@ -78,6 +78,15 @@ public class EmployeeController {
         return Result.success();
     }
 
+
+    /**
+     * 新增员工
+     *
+ * @param employeeDTO
+     * @return com.sky.result.Result
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @PostMapping
     @ApiOperation(value = "新增员工")
     public Result saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
@@ -86,6 +95,14 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * 员工分页查询
+     *
+ * @param employeePageQueryDTO
+     * @return com.sky.result.Result<com.sky.result.PageResult>
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @GetMapping("page")
     @ApiOperation(value = "员工分页查询")
     public Result<PageResult> getEmployeePage(EmployeePageQueryDTO employeePageQueryDTO) {
@@ -94,6 +111,15 @@ public class EmployeeController {
         return Result.success(page);
     }
 
+    /**
+     * 启用禁用员工账号
+     *
+ * @param status
+ * @param id
+     * @return com.sky.result.Result
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @PostMapping("status/{status}")
     @ApiOperation(value = "启用禁用员工账号")
     public Result startOrStopStatus(@PathVariable Integer status,Long id){
@@ -102,6 +128,14 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * 根据id查询员工
+     *
+ * @param id
+     * @return com.sky.result.Result<com.sky.entity.Employee>
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @GetMapping("{id}")
     @ApiOperation(value = "根据id查询员工")
     public Result<Employee> getEmployeeById(@PathVariable Long id) {
@@ -110,6 +144,14 @@ public class EmployeeController {
         return Result.success(emp);
     }
 
+    /**
+     * 修改员工信息
+     *
+ * @param employeeDTO
+     * @return com.sky.result.Result
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @PutMapping
     @ApiOperation(value = "修改员工信息")
     public Result updateEmployee(@RequestBody EmployeeDTO employeeDTO) {

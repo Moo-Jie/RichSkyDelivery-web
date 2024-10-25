@@ -5,6 +5,12 @@ spring:
   profiles:
     #当正式上线时，切换为prod
     active: dev  #application-dev.yml生效
+  redis:
+    host: ${sky.redis.host}
+    port: ${sky.redis.port}
+    database: ${sky.redis.database}
+    #如果没有使用配置文件启动，那么就没有设定密码
+    password: ${sky.redis.auth}
   main:
     allow-circular-references: true
   datasource:

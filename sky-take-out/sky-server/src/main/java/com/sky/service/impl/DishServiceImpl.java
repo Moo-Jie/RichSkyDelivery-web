@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.beans.beancontext.BeanContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,7 +34,14 @@ public class DishServiceImpl implements DishService {
     @Autowired
     private SetmealDishMapper setmealDishMapper;
 
-
+    /**
+     *
+     *
+     * @param pageDTO
+     * @return com.sky.result.PageResult
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public PageResult page(DishPageQueryDTO pageDTO) {
         //设置分页参数
@@ -45,6 +51,14 @@ public class DishServiceImpl implements DishService {
         return new PageResult(page.getTotal(), page.getResult());
     }
 
+    /**
+     *
+     *
+     * @param ids
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public void deleteBatch(List<Long> ids) {
         //获取要删除的菜品项
@@ -66,12 +80,28 @@ public class DishServiceImpl implements DishService {
         dishFlavorMapper.deleteByDishId(ids);
     }
 
+    /**
+     *
+     *
+     * @param categoryId
+     * @return java.util.List<com.sky.vo.DishVO>
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public List<DishVO> selectByCategoryId(Integer categoryId) {
         // 调用mapper查询菜品
         return dishMapper.selectByCategoryId(categoryId);
     }
 
+    /**
+     *
+     *
+     * @param id
+     * @return com.sky.vo.DishVO
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public DishVO getDishById(Long id) {
         // 调用mapper查询菜品
@@ -85,6 +115,14 @@ public class DishServiceImpl implements DishService {
         return dishVO;
     }
 
+    /**
+     *
+     *
+     * @param dishDTO
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public void update(DishDTO dishDTO) {
         Dish dish = new Dish();
@@ -104,13 +142,29 @@ public class DishServiceImpl implements DishService {
         }
     }
 
-
+    /**
+     *
+     *
+     * @param status
+     * @param id
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public void startOrStop(Integer status, Long id) {
         // 调用mapper修改菜品状态
         dishMapper.update(Dish.builder().id(id).status(status).build());
     }
 
+    /**
+     *
+     *
+ * @param dishdto
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public void save(DishDTO dishdto) {
         // 拷贝属性,剩余口味flavors属性不拷贝
