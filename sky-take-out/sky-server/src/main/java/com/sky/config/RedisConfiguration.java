@@ -13,6 +13,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 @Slf4j
+
+/**
+ * 自定义RedisTemplate的Bean配置，因为要指定序列化器为StringRedisSerializer
+ *
+ * @param null
+ * @return
+ * @author DuRuiChi
+ * @create 2024/10/25
+ **/
 public class RedisConfiguration {
     @Bean
     public RedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory){

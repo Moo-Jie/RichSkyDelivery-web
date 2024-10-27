@@ -9,10 +9,12 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class SetmealServiceImpl implements SetmealService {
     private SetmealMapper setmealMapper;
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+    @Autowired
+    private DishMapper dishMapper;
 
 
     /**
@@ -126,6 +130,28 @@ public class SetmealServiceImpl implements SetmealService {
     @Override
     public void startOrStop(Integer status, Integer id) {
         setmealMapper.startOrStop(status,id);
+    }
+
+    /**
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public List<SetmealVO> listBycategoryId(Integer categoryId) {
+        List<SetmealVO> setmealVOList = setmealMapper.listBycategoryId(categoryId);
+        return setmealVOList;
+    }
+
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    public List<DishItemVO> getDishBySetmealId(Integer id) {
+        //根据套餐id查询菜品
+        List<DishItemVO> dishs = setmealDishMapper.getDishItemBySetmealId(id);
+        //返回菜品
+        return dishs;
     }
 
     /**

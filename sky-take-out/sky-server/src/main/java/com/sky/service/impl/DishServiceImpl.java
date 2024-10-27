@@ -91,7 +91,14 @@ public class DishServiceImpl implements DishService {
     @Override
     public List<DishVO> selectByCategoryId(Integer categoryId) {
         // 调用mapper查询菜品
-        return dishMapper.selectByCategoryId(categoryId);
+        List<DishVO> dishVOS = dishMapper.selectByCategoryId(categoryId);
+        // 设置口味
+        dishVOS.forEach(dishVO -> {
+            // 为菜品VO对象设置菜品口味
+            dishVO.setFlavors(dishFlavorMapper.getByDishId(dishVO.getId()));
+        });
+        // 返回菜品VO对象
+        return dishVOS;
     }
 
     /**

@@ -25,6 +25,5 @@ public interface CategoryMapper {
     @AutoFileAssign(value = OperationType.UPDATE)
     void update(Category category);
 
-    @Select("select * from category where type = #{type}")
     List<Category> selectByType(Integer type);
 }

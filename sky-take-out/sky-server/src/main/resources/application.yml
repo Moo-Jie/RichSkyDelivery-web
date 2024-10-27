@@ -10,7 +10,7 @@ spring:
     port: ${sky.redis.port}
     database: ${sky.redis.database}
     #如果没有使用配置文件启动，那么就没有设定密码
-    password: ${sky.redis.auth}
+    #password: ${sky.redis.auth}
   main:
     allow-circular-references: true
   datasource:
@@ -38,12 +38,21 @@ logging:
 
 sky:
   jwt:
+    # 设置管理端的密钥配置
     # 设置jwt签名加密时使用的秘钥
-    admin-secret-key: itcast
+    admin-secret-key: rich01
     # 设置jwt过期时间
     admin-ttl: 7200000
     # 设置前端传递过来的令牌属性名
     admin-token-name: token
+    # 同样的，设置用户端的秘钥配置
+    user-secret-key: rich02
+    user-ttl: 7200000
+    user-token-name: authentication
+  #微信小程序的配置
+  wechat:
+    appid: ${sky.wechat.appid}
+    secret: ${sky.wechat.secret}
 
 
 aliyun:

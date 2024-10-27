@@ -21,6 +21,15 @@ public class AutoFileAspect {
     @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation(com.sky.Annotation.AutoFileAssign)")
     public void pointCut() {}
 
+    /**
+     * 自动公共字段进行赋值的AOP方法
+     * 反射获取方法形参，并为其赋值
+     * 
+ * @param joinPoint
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Before("pointCut()")
     public void AutoPublicFieldAssign(JoinPoint joinPoint) throws Throwable {
         //1.获取注解属性

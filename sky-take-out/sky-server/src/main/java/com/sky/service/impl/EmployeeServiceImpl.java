@@ -65,6 +65,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
+
+    /**
+     *
+     *
+     * @param employeeDTO
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public void saveEmployee(EmployeeDTO employeeDTO) {
         //判断身份证号和手机号是否符合标准长度
@@ -92,6 +101,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.insert(employee);
     }
 
+    /**
+     *
+     *
+     * @param employeePageQueryDTO
+     * @return com.sky.result.PageResult
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public PageResult getEmployeePage(EmployeePageQueryDTO employeePageQueryDTO) {
         //设置分页参数
@@ -103,6 +120,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         return new PageResult(page.getTotal(), page.getResult());
     }
 
+
+    /**
+     *
+     *
+     * @param id
+     * @return com.sky.entity.Employee
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public Employee getEmployeeById(Long id) {
         return employeeMapper.getEmployeeById(id);
@@ -130,6 +156,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.update(employee);
     }
 
+    /**
+     *
+     *
+ * @param status
+ * @param id
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public void startOrStopStatus(Integer status, Long id) {
         Employee emp = Employee.builder()

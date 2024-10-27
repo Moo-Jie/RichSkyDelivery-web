@@ -31,15 +31,17 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     private JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
 
     /**
-     * 注册自定义拦截器
+     * 注册自定义的拦截器
      *
      * @param registry
      */
     protected void addInterceptors(InterceptorRegistry registry) {
         log.info("开始注册自定义拦截器...");
-        registry.addInterceptor(jwtTokenAdminInterceptor)
-                .addPathPatterns("/admin/**")
-                .excludePathPatterns("/admin/employee/login");
+        registry.addInterceptor(jwtTokenAdminInterceptor)//注册自定义拦截器
+                .addPathPatterns("/admin/**")//拦截路径
+                .excludePathPatterns("/admin/employee/login")//不拦截登录接口
+                .excludePathPatterns("/user/user/login")
+                .excludePathPatterns("/user/shop/status");
     }
 
     /**
@@ -63,7 +65,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     }
 
     /**
-     * 设置静态资源映射
+     * 设置静态资源映射，用于访问静态资源
      * @param registry
      */
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {

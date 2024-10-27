@@ -31,6 +31,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private DishMapper dishMapper;
 
+    /**
+     *
+     *
+     * @param categoryDTO
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public void save(CategoryDTO categoryDTO) {
         Category category = new Category();
@@ -46,6 +54,14 @@ public class CategoryServiceImpl implements CategoryService {
         categoryMapper.save(category);
     }
 
+    /**
+     *
+     *
+     * @param categoryPageQueryDTO
+     * @return com.sky.result.PageResult
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public PageResult pageQuery(CategoryPageQueryDTO categoryPageQueryDTO) {
         //设置分页参数
@@ -60,6 +76,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
 
+
+    /**
+     *
+     *
+     * @param id
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public void deleteById(Long id) {
         //查询当前分类是否关联了菜品，如果关联了，抛出业务异常
@@ -72,6 +97,14 @@ public class CategoryServiceImpl implements CategoryService {
         categoryMapper.deleteById(id);
     }
 
+    /**
+     *
+     *
+     * @param categoryDTO
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public void update(CategoryDTO categoryDTO) {
         //将DTO中的属性拷贝到category中
@@ -84,6 +117,15 @@ public class CategoryServiceImpl implements CategoryService {
         categoryMapper.update(category);
     }
 
+    /**
+     *
+     *
+     * @param status
+     * @param id
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public void startOrStop(Integer status, Long id) {
         Category category = Category.builder()
@@ -93,6 +135,15 @@ public class CategoryServiceImpl implements CategoryService {
         categoryMapper.update(category);
     }
 
+
+    /**
+     *
+     *
+ * @param type
+     * @return java.util.List<com.sky.entity.Category>
+     * @author DuRuiChi
+     * @create 2024/10/25
+     **/
     @Override
     public List<Category> list(Integer type) {
         List<Category> list = categoryMapper.selectByType(type);
