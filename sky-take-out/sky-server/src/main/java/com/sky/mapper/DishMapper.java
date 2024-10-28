@@ -33,7 +33,7 @@ public interface DishMapper {
     void deleteBatch(List<Long> ids);
 
 
-    @Select("select * from dish where category_id = #{categoryId}")
+    @Select("select * from dish where category_id = #{categoryId} and status = 1")
     List<DishVO> selectByCategoryId(Integer categoryId);
 
     @Select("select * from dish where id = #{id}")
