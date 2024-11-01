@@ -15,6 +15,7 @@ import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,6 +29,7 @@ import java.util.Set;
 
 @Service
 @Transactional
+@Slf4j
 public class DishServiceImpl implements DishService {
     @Autowired
     private DishMapper dishMapper;
@@ -93,7 +95,6 @@ public class DishServiceImpl implements DishService {
     private void cleanCache(String pattern){
         Set keys = redisTemplate.keys(pattern);
         redisTemplate.delete(keys);
-        System.out.println("数据变动，清空菜品缓存！");
     }
 
     /**
@@ -125,7 +126,7 @@ public class DishServiceImpl implements DishService {
 
         // 3.存入Redis缓存
         redisTemplate.opsForValue().set(key,dishVOS);//String序列化器生效
-        System.out.println("已存入缓存");
+        log.info("菜品信息查询成功,已缓存数据至Redis" );
 
         // 4.返回菜品VO对象
         return dishVOS;
@@ -164,6 +165,7 @@ public class DishServiceImpl implements DishService {
     public void update(DishDTO dishDTO) {
         //清除缓存
         cleanCache("dish_*");
+        log.info("套餐信息修改成功,清空缓存" );
         // 拷贝属性,剩余口味flavors属性不拷贝
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
@@ -195,6 +197,7 @@ public class DishServiceImpl implements DishService {
     public void startOrStop(Integer status, Long id) {
         //清除缓存
         cleanCache("dish_*");
+        log.info("套餐状态修改成功,清空缓存" );
         // 调用mapper修改菜品状态
         dishMapper.update(Dish.builder().id(id).status(status).build());
     }
@@ -211,8 +214,10 @@ public class DishServiceImpl implements DishService {
     public void save(DishDTO dishdto) {
         //清除缓存
         cleanCache("dish_*");
+        log.info("套餐信息保存成功,清空缓存" );
+
         // 拷贝属性,剩余口味flavors属性不拷贝
-        Dish dish = Dish.builder().build();
+        Dish dish = Dish.builder().status(StatusConstant.DISABLE).build();
         BeanUtils.copyProperties(dishdto, dish);
         // 保存菜品
         dishMapper.insert(dish);

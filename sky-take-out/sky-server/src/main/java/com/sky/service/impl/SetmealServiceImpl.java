@@ -16,8 +16,11 @@ import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
 import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,23 +28,22 @@ import java.util.List;
 
 @Transactional()
 @Service
+@Slf4j
 public class SetmealServiceImpl implements SetmealService {
     @Autowired
     private SetmealMapper setmealMapper;
     @Autowired
     private SetmealDishMapper setmealDishMapper;
-    @Autowired
-    private DishMapper dishMapper;
 
 
     /**
-     *
-     *
+     *  管理端查询功能
      * @param setmealPageQueryDTO
      * @return com.sky.result.PageResult
      * @author DuRuiChi
      * @create 2024/10/25
      **/
+
     @Override
     public PageResult pageQuery(SetmealPageQueryDTO setmealPageQueryDTO) {
         //设置分页参数
@@ -60,6 +62,7 @@ public class SetmealServiceImpl implements SetmealService {
      * @author DuRuiChi
      * @create 2024/10/25
      **/
+    @CacheEvict(cacheNames = "SetmealCache",key = "#setmealDTO.categoryId")
     @Override
     public void save(SetmealDTO setmealDTO) {
         //Setmeal对象
@@ -74,6 +77,8 @@ public class SetmealServiceImpl implements SetmealService {
         }
         //保存套餐和菜品的关联关系
         setmealDishMapper.save(setmealDishes);
+
+        log.info("套餐信息保存成功,清空缓存" );
     }
 
     /**
@@ -104,6 +109,7 @@ public class SetmealServiceImpl implements SetmealService {
      * @author DuRuiChi
      * @create 2024/10/25
      **/
+    @CacheEvict(cacheNames = "SetmealCache",key = "#setmealDTO.categoryId")
     @Override
     public void update(SetmealDTO setmealDTO) {
         //更新
@@ -116,6 +122,8 @@ public class SetmealServiceImpl implements SetmealService {
         List<SetmealDish> dishes = setmealDTO.getSetmealDishes();
         dishes.forEach(dish -> dish.setSetmealId(setmeal.getId()));
         setmealDishMapper.save(dishes);
+
+        log.info("套餐信息修改成功,清空缓存" );
     }
 
     /**
@@ -127,22 +135,28 @@ public class SetmealServiceImpl implements SetmealService {
      * @author DuRuiChi
      * @create 2024/10/25
      **/
+    @CacheEvict(cacheNames = "SetmealCache",allEntries = true)//因为不确定是哪个分类，因此要删除所有的缓存数据
     @Override
     public void startOrStop(Integer status, Integer id) {
         setmealMapper.startOrStop(status,id);
+
+        log.info("套餐状态修改成功,清空缓存" );
     }
 
     /**
      * @param categoryId
      * @return
      */
+    @Cacheable(cacheNames = "SetmealCache",key = "#categoryId")//根据分类id缓存数据
     @Override
     public List<SetmealVO> listBycategoryId(Integer categoryId) {
         List<SetmealVO> setmealVOList = setmealMapper.listBycategoryId(categoryId);
+        log.info("套餐信息查询成功,已缓存数据至Redis" );
         return setmealVOList;
     }
 
     /**
+     *
      * @param id
      * @return
      */
@@ -162,6 +176,7 @@ public class SetmealServiceImpl implements SetmealService {
      * @author DuRuiChi
      * @create 2024/10/25
      **/
+    @CacheEvict(cacheNames = "SetmealCache",allEntries = true)//因为不确定是哪个分类，因此要删除所有的缓存数据
     @Override
     public void deleteByIds(List<Long> ids) {
         ids.forEach(id -> {
@@ -177,5 +192,7 @@ public class SetmealServiceImpl implements SetmealService {
             //删除套餐菜品关系表中的数据
             setmealDishMapper.deleteBySetmealId(setmealId);
         });
+
+        log.info("套餐信息删除成功,清空缓存" );
     }
 }

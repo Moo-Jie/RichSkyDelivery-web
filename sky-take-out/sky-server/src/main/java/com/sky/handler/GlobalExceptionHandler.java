@@ -3,6 +3,7 @@ package com.sky.handler;
 import com.aliyun.oss.OSSException;
 import com.sky.exception.BaseException;
 import com.sky.result.Result;
+import io.lettuce.core.RedisConnectionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
      * 如果没有找到，那么异常会继续向上抛出，直到找到合适的异常处理器或者程序崩溃。
      */
     @ExceptionHandler//异常
-    public Result exceptionHandler(BaseException ex){
+    public Result exceptionHandlerForBaseException(BaseException ex){
         log.error("异常信息：{}", ex.getMessage());
         return Result.error(ex.getMessage());
     }
@@ -36,19 +37,19 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler
-    public Result exceptionHandler(SQLIntegrityConstraintViolationException ex){
+    public Result exceptionHandlerForSQLIntegrityConstraintViolation(SQLIntegrityConstraintViolationException ex){
         //处理：java.sql.SQLIntegrityConstraintViolationException:
         //错误信息：Duplicate entry 'dadaddadad' for key 'employee.idx_username'
         if(ex.getMessage().contains("Duplicate entry")){
             String[] split = ex.getMessage().split(" ");
             String msg = split[2] + "已存在";
-            return Result.error(msg);
+            return Result.error("SQL完整性约束违规异常："+msg);
         }
         return Result.error("未知错误");
     }
 
     @ExceptionHandler
-    public Result exceptionHandler(OSSException ex){
+    public Result exceptionHandlerForAliOSSConnection(OSSException ex){
         log.error("阿里云文件上传失败：{}", ex.getMessage());
         //异常处理
         System.out.println("Caught an OSSException, which means your request made it to OSS, "
@@ -59,5 +60,17 @@ public class GlobalExceptionHandler {
         System.out.println("Host ID:" + ex.getHostId());
 
         return Result.error("阿里云文件上传失败");
+    }
+
+    /**
+     * 捕获Redis连接异常
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(RedisConnectionException.class)
+    public Result exceptionHandlerForRedisConnection(RedisConnectionException ex) {
+        log.error("Redis连接异常: {}", ex.getMessage());
+        // 根据您的需求返回错误信息，这里是一个示例
+        return Result.error("无法连接到Redis服务器");
     }
 }
