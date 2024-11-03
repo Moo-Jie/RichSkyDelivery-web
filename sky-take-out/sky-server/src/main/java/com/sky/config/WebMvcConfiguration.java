@@ -42,9 +42,8 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         log.info("开始注册自定义拦截器...");
         registry.addInterceptor(jwtTokenEmpInterceptor)//注册自定义拦截器
                 .addPathPatterns("/admin/**")//拦截路径
-                .excludePathPatterns("/admin/employee/login")//不拦截登录接口
-                .excludePathPatterns("/user/user/login")
-                .excludePathPatterns("/user/shop/status");
+                .excludePathPatterns("/admin/employee/login");//不拦截登录接口
+
 
         registry.addInterceptor(jwtTokenUserInterceptor)
                 .addPathPatterns("/user/**")

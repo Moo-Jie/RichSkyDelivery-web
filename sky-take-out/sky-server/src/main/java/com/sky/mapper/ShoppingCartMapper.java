@@ -21,4 +21,7 @@ public interface ShoppingCartMapper {
     void deleteByUserId(ShoppingCart build);
 
     void subShoppingCartByDishIdOrsetmealId(ShoppingCartDTO shoppingCartDTO);
+
+
+    void insertBatch(List<ShoppingCart> shoppingCarts);
 }
