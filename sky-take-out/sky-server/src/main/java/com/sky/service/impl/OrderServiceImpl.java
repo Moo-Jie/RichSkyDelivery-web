@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -15,24 +16,24 @@ import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
-import com.sky.result.Result;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
-import io.swagger.annotations.ApiOperation;
+import com.sky.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -51,6 +52,9 @@ public class OrderServiceImpl implements OrderService {
     private UserMapper userMapper;
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+    @Autowired
+    private WebSocketServer webSocketServer;
+
     /**
      * 订单支付
      *
@@ -74,8 +78,7 @@ public class OrderServiceImpl implements OrderService {
 //            throw new OrderBusinessException("该订单已支付");
 //        }
 
-        //直接封装假的支付返回结果
-
+        //1.直接封装假的支付返回结果
         //模拟预支付订单，设置状态为：订单已支付
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code", "ORDERPAID");
@@ -91,6 +94,15 @@ public class OrderServiceImpl implements OrderService {
         String orderNumber = ordersPaymentDTO.getOrderNumber();
         //把模拟的已完成的订单同步到数据库
         userOrderMapper.updateStatus(OrderStatus,OrderPaidStatus,chek_out_time,orderNumber);
+
+        //2.WebSocket推送消息到管理端
+        Map map = new HashMap();
+        map.put("type", 1);//消息类型，1表示来单提醒
+        map.put("orderId",userOrderMapper.getByNumber(orderNumber).getId());//订单的ID
+        map.put("content", "订单号：" + orderNumber);//订单号
+        //通过WebSocket实现来单提醒，向客户端浏览器推送消息
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
+        //3.返回VO
         return vo;
     }
 
