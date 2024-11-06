@@ -97,4 +97,12 @@ public class UserOrderContorller {
         orderService.repetition(id);
         return Result.success();
     }
+
+    @GetMapping("/reminder/{id}")
+    @ApiOperation("用户催单")
+    public Result OrderReminder(@PathVariable Long id) {
+        log.info("用户催单：{}", id);
+        orderService.OrderReminder(id);//reminder提醒
+        return Result.success();
+    }
 }

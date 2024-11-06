@@ -1,6 +1,7 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
@@ -8,6 +9,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface UserOrderMapper {
@@ -48,4 +51,17 @@ public interface UserOrderMapper {
 
     @Select("select * from orders where number = #{number}")
     Orders getByNumber(String number);
+
+    @Select("select * from orders where status = 5")
+    List<Orders> getOrderByStatusIsCompleted();
+
+    @Select("select * from orders")
+    List<Orders> getAllOrder();
+
+    List<GoodsSalesDTO> getSalesTop10(LocalDateTime begin, LocalDateTime end);
+
+
+    Integer countByMap(Map map);
+
+    Double sumByMap(Map map);
 }

@@ -11,7 +11,7 @@
         </foreach>
     </insert>
 
-    <update id="updateById" useGeneratedKeys="true" keyProperty="id">
+    <update id="update" useGeneratedKeys="true" keyProperty="id">
         update shopping_cart
         <set>
             <if test="name!= null">
@@ -43,6 +43,7 @@
             </if>
         </set>
     </update>
+
     <delete id="subShoppingCartByDishIdOrsetmealId">
         delete from shopping_cart
         <where>

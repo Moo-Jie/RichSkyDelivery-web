@@ -56,6 +56,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCartMapper.subShoppingCartByDishIdOrsetmealId(shoppingCartDTO);
     }
 
+
+
     /**
      * @param shoppingCartDTO
      */
@@ -67,11 +69,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCart.setUserId(BaseContext.getCurrentId());
         //存在更新
         List<ShoppingCart> shoppingCarts = shoppingCartMapper.selectList(shoppingCart);
-        if(shoppingCarts!= null && shoppingCarts.size()==1)
+        if(shoppingCarts!= null && shoppingCarts.size() == 1)
         {
             shoppingCart = shoppingCarts.get(0);
             shoppingCart.setNumber(shoppingCart.getNumber()+1);
-            shoppingCartMapper.updateById(shoppingCart);
+            shoppingCartMapper.updateNumberById(shoppingCart);
         }
         //不存在插入
         else {

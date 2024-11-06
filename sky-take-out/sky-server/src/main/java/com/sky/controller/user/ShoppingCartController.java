@@ -32,7 +32,7 @@ public class ShoppingCartController {
      * @create 2024/10/30
      **/
     public Result<String> add(@RequestBody ShoppingCartDTO shoppingCartDTO) {
-        log.info(shoppingCartDTO.toString());
+        log.info( "添加购物车");
         shoppingCartService.addShoppingCart(shoppingCartDTO);
         return Result.success();
     }

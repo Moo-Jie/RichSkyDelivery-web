@@ -364,6 +364,8 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+
+
     /**
      * Page<Orders>转换为List<OrderVO>
      *
@@ -461,5 +463,27 @@ public class OrderServiceImpl implements OrderService {
                 .orderAmount(order.getAmount())
                 .orderTime(order.getOrderTime())
                 .build();
+    }
+
+    /**
+     * 向前端发送订单催单消息
+     *
+ * @param id
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/11/4
+     **/
+
+    @Override
+    public void OrderReminder(Long id) {
+        Orders orders = userOrderMapper.getOrderById(id);
+        if(orders == null)
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        //封装消息
+        Map message = new HashMap();
+        message.put("type", 2);
+        message.put("orderId", id);
+        message.put("content", "订单号：" + orders.getNumber());
+        webSocketServer.sendToAllClient(JSON.toJSONString(message));
     }
 }
