@@ -6,16 +6,21 @@ import com.sky.entity.User;
 import com.sky.mapper.UserMapper;
 import com.sky.mapper.UserOrderMapper;
 import com.sky.service.ReportService;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.SalesTop10ReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.sky.service.WorkspaceService;
+import com.sky.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,6 +36,78 @@ public class ReportServiceImpl implements ReportService {
     private UserOrderMapper userOrderMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private WorkspaceService workspaceService;
+
+    /**
+     * 导出最近30日报表数据
+     * 
+ * @param response
+     * @return void
+     * @author DuRuiChi
+     * @create 2024/11/8
+     **/
+    @Override
+    public void exportBusinessData(HttpServletResponse response)  {
+        LocalDate begin = LocalDate.now().minusDays(30);
+        LocalDate end = LocalDate.now().minusDays(1);
+        //1.查询数据库，获取近30日营业数据封装到vo
+        BusinessDataVO businessData = workspaceService.getBusinessData(
+                LocalDateTime.of(begin, LocalTime.MIN),
+                LocalDateTime.of(end, LocalTime.MAX));
+        //2.利用POI将数据导出到Excel文件
+            //拿到模板报表
+        InputStream in = this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("template/OperateDataReportTemplate.xlsx");
+            //使用POI将数据写入到Excel文件
+        try {
+            //生成excel
+            XSSFWorkbook excel=new XSSFWorkbook(in);
+            //获取第一个sheet
+            XSSFSheet sheet=excel.getSheet("Sheet1");
+            //时间填写
+            sheet.getRow(1)
+                    .getCell(1)
+                    .setCellValue("<[" + begin +"] 至 [" + end +"] 的营业报表>");
+            //概览数据
+                //第四行数据填充
+                XSSFRow row = sheet.getRow(3);
+                row.getCell(2).setCellValue(businessData.getTurnover());
+                row.getCell(4).setCellValue(businessData.getOrderCompletionRate());
+                row.getCell(6).setCellValue(businessData.getNewUsers());
+                //第五行数据填充
+                row = sheet.getRow(4);
+                row.getCell(2).setCellValue(businessData.getValidOrderCount());
+                row.getCell(4).setCellValue(businessData.getUnitPrice());
+            //明细数据
+                for (int i = 0; i < 30; i++) {
+                LocalDate date = begin.plusDays(i);
+                //准备明细数据
+                businessData = workspaceService.getBusinessData(
+                        LocalDateTime.of(date,LocalTime.MIN),
+                        LocalDateTime.of(date, LocalTime.MAX));
+                row = sheet.getRow(7 + i);
+                row.getCell(1).setCellValue(date.toString());
+                row.getCell(2).setCellValue(businessData.getTurnover());
+                row.getCell(3).setCellValue(businessData.getValidOrderCount());
+                row.getCell(4).setCellValue(businessData.getOrderCompletionRate());
+                row.getCell(5).setCellValue(businessData.getUnitPrice());
+                row.getCell(6).setCellValue(businessData.getNewUsers());
+            }
+        //3.通过输出流将Excel文件下载到客户端
+            ServletOutputStream out = response.getOutputStream();//从响应中获取输出流
+            excel.write(out);
+            //关闭资源
+            out.flush();
+            out.close();
+            excel.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException("POI生成Excel报表时异常："+e);
+        }
+
+    }
 
     /**
      * @param begin
