@@ -23,6 +23,6 @@ public class MessageConstant {
     public static final String DISH_BE_RELATED_BY_SETMEAL = "当前菜品关联了套餐,不能删除";
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
-    public static final String ORDER_PersonID_ERROR = "身份证格式错误";
-    public static final String ORDER_Phone_ERROR = "手机号格式错误";
+    public static final String ORDER_PersonID_ERROR = "身份证号后台校验不合法，请填写真实的身份证号！";
+    public static final String ORDER_Phone_ERROR = "手机号后台校验不合法，请填写真实的手机号！";
 }
